@@ -1,0 +1,25 @@
+library(ggplot2)
+library(dplyr)
+library(plotly)
+
+setwd('D:/SAMPLE_DATA/Mapping/Analysis/Scatter_Plot/')
+
+data <- read.csv('SevereVSHealthy.txt', sep = '\t', header = TRUE)
+
+colnames(data)
+
+normalization_data <- data %>% select(Genes, log2FC)
+
+normalization_data <- normalization_data %>%
+  mutate(text = paste("Gene: ", Genes, "\nlog2FC: ", log2FC, sep=""))
+
+p <- ggplot(normalization_data, aes(x = Genes, y = log2FC, text = text)) +
+  geom_point(color = 'blue', position = position_jitter(width = 0.1, height = 0)) +
+  xlab("Genes") +
+  ylab("log2 Fold Change") +
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  theme(plot.title = element_text(hjust = 0.5))
+
+pp <- ggplotly(p, tooltip = "text")
+pp
